@@ -15,10 +15,7 @@ public class CustomerServiceApplication {
 
 /*    TODO UPPGIFT
 
-Kolla på att skriva bättre felmeddelande (t.ex, om kunden inte finns när man bokar. Just nu krashar sidan!).
---- funkar just nu på login.
---- fixat i edit, provkör gärna och kolla om ni hittar någon bugg. statuskoder!!!!!!
+statuskoder, objekt orientera felmeddelanden. (ingen kommer göra det här).
 
-Unik mail?
 */
 

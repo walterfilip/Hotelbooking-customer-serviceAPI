@@ -16,13 +16,10 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
-
+    public void run(String... args) {
         if (customerRepository.count() == 0) {
             customerRepository.save(new Customer("Nils", "Modig", "nils@fakemail.se", "0767777777", Encoder.hashPassword("hej")));
             customerRepository.save(new Customer("Peter", "Peterstein", "peter@fakemail.se", "0767777776", Encoder.hashPassword("hej")));
-
         }
     }
-
 }

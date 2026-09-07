@@ -21,9 +21,7 @@ public class CustomerRestController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CustomerResponse createCustomer(
-            @RequestBody @Valid CreateCustomerRequest request
-    ) {
+    public CustomerResponse createCustomer(@RequestBody @Valid CreateCustomerRequest request) {
         return customerService.createCustomer(request);
     }
 
@@ -33,21 +31,18 @@ public class CustomerRestController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<CustomerResponse> loginCustomer(
-            @RequestBody @Valid LoginRequest request
-    ) {
+    public ResponseEntity<CustomerResponse> loginCustomer(@RequestBody @Valid LoginRequest request) {
         CustomerResponse customer = customerService.loginCustomer(request);
+
         if (customer == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
         return ResponseEntity.ok(customer);
     }
 
     @PutMapping("/{id}")
-    public CustomerResponse updateCustomer(
-            @PathVariable Long id,
-            @RequestBody @Valid UpdateCustomerRequest request
-    ) {
+    public CustomerResponse updateCustomer(@PathVariable Long id, @RequestBody @Valid UpdateCustomerRequest request) {
         return customerService.updateCustomer(id, request);
     }
 
