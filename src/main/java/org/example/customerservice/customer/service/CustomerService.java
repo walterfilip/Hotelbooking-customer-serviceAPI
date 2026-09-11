@@ -4,6 +4,7 @@ import org.example.customerservice.customer.model.CustomerResponse;
 import org.example.customerservice.customer.model.*;
 import org.example.customerservice.customer.repository.CustomerRepository;
 import org.example.customerservice.utils.encoder.Encoder;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -76,6 +77,22 @@ public class CustomerService {
     public CustomerResponse updateCustomer(Long customerId, UpdateCustomerRequest request) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Kunden finns inte"));
 
+        if (request.changePassword()) {
+            if (request.currentPassword() == null
+                    || request.currentPassword().isBlank()
+                    || request.newPassword() == null
+                    || request.newPassword().isBlank()) {
+
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fyll i nuvarande och nytt lösenord");
+            }
+
+            boolean correctPassword = Encoder.checkPassword(request.currentPassword(), customer.getPassword());
+
+            if (!correctPassword) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nuvarande lösenord är felaktigt");
+            }
+        }
+
         customer.setFirstName(request.firstName());
         customer.setLastName(request.lastName());
         customer.setPhoneNumber(request.phoneNumber());
@@ -87,19 +104,6 @@ public class CustomerService {
         Customer savedCustomer = customerRepository.save(customer);
 
         return toResponse(savedCustomer);
-    }
-
-    public boolean checkPassword(CheckPasswordRequest passwordRequest) {
-        if (passwordRequest.password() == null || passwordRequest.password().isBlank()) {
-            return false;
-        }
-        if (passwordRequest.newPassword() == null || passwordRequest.newPassword().isBlank()) {
-            return false;
-        }
-
-        Customer customer = customerRepository.findByEmail(passwordRequest.email());
-
-        return Encoder.checkPassword(passwordRequest.password(), customer.getPassword());
     }
 
     public void removeUser(Long customerId) {
