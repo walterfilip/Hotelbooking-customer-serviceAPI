@@ -21,16 +21,12 @@ public class CustomerService {
     }
     public CustomerResponse createCustomer(CreateCustomerRequest request) {
 
-            List<Customer> list =
-                    customerRepository.getCustomerByEmail(request.email());
+            List<Customer> list = customerRepository.getCustomerByEmail(request.email());
 
             //Ändringen från tomt objekt kan möjligen inte fungera ihop med mastern på hotelbooking.
 
             if(!list.isEmpty()){
-                throw new ResponseStatusException(
-                        CONFLICT,
-                        "Epostadressen är redan registrerad"
-                );
+                throw new ResponseStatusException(CONFLICT, "Epostadressen är redan registrerad");
             }
 
             Customer customer = new Customer();
