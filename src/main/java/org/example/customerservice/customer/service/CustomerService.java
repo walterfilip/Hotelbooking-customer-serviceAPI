@@ -24,6 +24,8 @@ public class CustomerService {
             List<Customer> list =
                     customerRepository.getCustomerByEmail(request.email());
 
+            //Ändringen från tomt objekt kan möjligen inte fungera ihop med mastern på hotelbooking.
+
             if(!list.isEmpty()){
                 throw new ResponseStatusException(
                         CONFLICT,
