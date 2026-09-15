@@ -52,13 +52,19 @@ public class CustomerService {
         Customer customer = customerRepository.findByEmail(request.email());
 
         if (customer == null) {
-            return null;
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Fel användarnamn eller lösenord"
+            );
         }
 
         boolean correctPassword = Encoder.checkPassword(request.password(), customer.getPassword());
 
         if (!correctPassword) {
-            return null;
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Fel användarnamn eller lösenord"
+            );
         }
 
         return toResponse(customer);
