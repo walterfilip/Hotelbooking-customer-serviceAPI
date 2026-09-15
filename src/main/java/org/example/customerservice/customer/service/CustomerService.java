@@ -111,7 +111,4 @@ public class CustomerService {
         customerRepository.delete(customer);
     }
 
-    public String hello(){
-        return "hej";
-    }
 }
