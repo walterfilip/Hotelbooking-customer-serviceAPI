@@ -4,6 +4,7 @@ import org.example.customerservice.customer.model.CreateCustomerRequest;
 import org.example.customerservice.customer.model.Customer;
 import org.example.customerservice.customer.model.CustomerResponse;
 import org.example.customerservice.customer.repository.CustomerRepository;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,6 +15,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,6 +33,13 @@ class CustomerServiceTest {
     private CustomerService customerService;
 
     private CreateCustomerRequest request = new CreateCustomerRequest(
+            "jens",
+            "jensson",
+            "hej@jens.se",
+            "07012345",
+            "hej"
+    );
+    private Customer customer = new Customer(
             "jens",
             "jensson",
             "hej@jens.se",
@@ -75,6 +85,30 @@ class CustomerServiceTest {
         );
 
         assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
+    }
+
+
+    @Test
+    void getCustomerByIdShouldReturnCustomer() {
+       when(customerRepository.findById(1L))
+               .thenReturn(Optional.of(customer));
+
+       CustomerResponse result = customerService.getCustomerById(1L);
+       assertEquals(customer.getFirstName(),result.firstName());
+       assertEquals(customer.getLastName(),result.lastName());
+       assertEquals(customer.getEmail(),result.email());
+       assertEquals(customer.getPhoneNumber(),result.phoneNumber());
+       assertNotEquals(customer.getFirstName(),result.lastName());
+
+    }
+    @Test
+    void IfCustomerDoesNotExistShouldThrowException() {
+      when(customerRepository.findById(1L))
+              .thenReturn(Optional.empty());
+
+
+      assertThrows(RuntimeException.class,
+              () -> customerService.getCustomerById(1L));
     }
 
 }
