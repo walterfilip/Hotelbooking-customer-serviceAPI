@@ -110,4 +110,5 @@ public class CustomerService {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Kunden finns inte"));
         customerRepository.delete(customer);
     }
+
 }
