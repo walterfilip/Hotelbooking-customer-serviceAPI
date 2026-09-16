@@ -145,5 +145,14 @@ class CustomerServiceTest {
 
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
     }
+    @Test
+    void loginCustomerFailedShouldThrowExceptionWhenEmailIsNotRegistered() {
+        when(customerRepository.findByEmail(loginRequest.email()))
+                .thenReturn(null);
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                () -> customerService.loginCustomer(loginRequest));
+
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
+    }
 
 }
