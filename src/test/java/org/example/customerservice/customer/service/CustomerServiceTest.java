@@ -133,13 +133,15 @@ class CustomerServiceTest {
 
     @Test
     void loginCustomerFailedShouldThrowException() {
+        LoginRequest request = new LoginRequest(loginRequest.email(), "hejsan");
+        customer.setPassword(Encoder.hashPassword(loginRequest.password()));
         when(customerRepository.findByEmail(loginRequest.email()))
                 .thenReturn(customer);
 
 
         ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,
-                () -> customerService.loginCustomer(loginRequest));
+                () -> customerService.loginCustomer(request));
 
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
     }
