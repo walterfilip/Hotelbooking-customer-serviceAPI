@@ -3,8 +3,10 @@ package org.example.customerservice.customer.service;
 import org.example.customerservice.customer.model.CreateCustomerRequest;
 import org.example.customerservice.customer.model.Customer;
 import org.example.customerservice.customer.model.CustomerResponse;
+import org.example.customerservice.customer.model.LoginRequest;
 import org.example.customerservice.customer.repository.CustomerRepository;
 
+import org.example.customerservice.utils.encoder.Encoder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -46,6 +48,7 @@ class CustomerServiceTest {
             "07012345",
             "hej"
     );
+    LoginRequest loginRequest = new LoginRequest("hej@jens.se", "hej");
 
     @Test
     void createCustomerShouldReturnCreatedCustomer() {
@@ -109,6 +112,36 @@ class CustomerServiceTest {
 
       assertThrows(RuntimeException.class,
               () -> customerService.getCustomerById(1L));
+    }
+
+    @Test
+    void loginCustomerShouldReturnCustomerResponse() {
+
+        customer.setPassword(Encoder.hashPassword(loginRequest.password()));
+
+        when(customerRepository.findByEmail(loginRequest.email()))
+                .thenReturn(customer);
+
+        CustomerResponse result = customerService.loginCustomer(loginRequest);
+
+        assertEquals(customer.getFirstName(),result.firstName());
+        assertEquals(customer.getLastName(),result.lastName());
+        assertEquals(customer.getEmail(),result.email());
+        assertEquals(customer.getPhoneNumber(),result.phoneNumber());
+
+    }
+
+    @Test
+    void loginCustomerFailedShouldThrowException() {
+        when(customerRepository.findByEmail(loginRequest.email()))
+                .thenReturn(customer);
+
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> customerService.loginCustomer(loginRequest));
+
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
     }
 
 }
